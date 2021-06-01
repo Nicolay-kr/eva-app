@@ -28,10 +28,18 @@ code {
 .description{
   text-align: left;
 }
+.contentBox{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+
+}
 .descBox{
   display: flex;
   flex-direction: column;
   gap: 10px;
+  border: 1px solid;
+  padding: 10px 20px;
 }
 .sistem{
   font-weight: 700;
@@ -40,4 +48,16 @@ code {
 }
 .sistemName{
   color:red;
+}
+.corporation{
+  text-align: center;
+  color:blue;
+  font-size: 20px;
+}
+.corporation:hover{
+  color:red;
+}
+.popupContent{
+  width: 500px;
+  height: 500px;
 }

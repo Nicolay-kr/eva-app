@@ -1,10 +1,15 @@
 import * as React from "react";
-import { render } from "react-dom";
+// import { render } from "react-dom";
 import axios from 'axios';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Popup from '../components/Popup'
+import {
+  changePopup,
+} from '../store/mainSlice';
+import { useAppSelector, useAppDispatch } from '../store/hooks'
 
 
 
@@ -14,44 +19,39 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 type Fraction = {
   corporation_id: number;
   description: string;
-  // faction_id:number,
-  // is_unique:	boolean,
-  // militia_corporation_id:	number,
   name: string;
-  // size_factor:	number,
   solar_system_id: number;
-  // station_count: number,
-  // station_system_count:	number,.
   [key: string]: any,
-  // solar_system_name: string;
 }
 
 type Sistem = {
   name: string;
-  system_id: number;
 }
 
 
 type MyState = {
   fractions: Fraction[] // like this
+  popup: boolean
 };
-class Main extends React.Component<{}, MyState> {
 
+class Main extends React.Component<{}, MyState> {
   // constructor(prop) {
   //   super(this.props);
   //   this.getSolarSistem = this.getSolarSistem.bind(this);
   // }
   state: MyState = {
     fractions: [],
+    popup: false,
   };
   componentDidMount() {
     axios.get<Fraction[]>('https://esi.evetech.net/legacy/universe/factions/')
       .then(response => {
-        const arr = response.data
+        const arr = response.data.filter((item) => item.corporation_id !== 0)
         this.setState({
           fractions: arr
         })
-        this.getSolarSistem()
+        this.addField(`https://esi.evetech.net/legacy/universe/systems/`, `solar_system_id`, `sistemName`)
+        this.addField(`https://esi.evetech.net/legacy/corporations/`, `corporation_id`, `corporationName`)
       });
   }
   // getSolarSistem(event: React.MouseEvent<HTMLDivElement>,id:string) {
@@ -60,16 +60,21 @@ class Main extends React.Component<{}, MyState> {
   //       return console.log(response.data.name)
   //     });
   // }
-  getSolarSistem = () => {
-    const sistemsId: string[] = this.state.fractions.map((item: any) => item.solar_system_id.toString())
-    const sistemsNames: string[] = []
-    sistemsId.forEach((item) => {
-      axios.get<Sistem>(`https://esi.evetech.net/legacy/universe/systems/${item}`)
+  addField = (url: string, param: string, fieldName: string) => {
+    // console.log(this.state.fractions)
+    // console.log(url, param)
+    const arrayId: string[] = this.state.fractions.map((item: any) => item[param].toString())
+    console.log(arrayId)
+    const arrayNames: string[] = []
+    arrayId.forEach((item, index) => {
+      axios.get<Sistem>(`${url}${item}`)
         .then(response => {
-          sistemsNames.push(response.data.name)
-          if (this.state.fractions.length === sistemsNames.length) {
+          arrayNames[index] = response.data.name;
+          if (this.state.fractions.length === arrayNames.length) {
+            // console.log(arrayNames)
             const arr = this.state.fractions
-            arr.forEach((item, index) => item["sistemName"] = sistemsNames[index])
+            arr.forEach((item, index) => item[fieldName] = arrayNames[index])
+            // console.log(arr)
             this.setState({
               fractions: arr
             })
@@ -77,11 +82,24 @@ class Main extends React.Component<{}, MyState> {
         })
     })
   }
+  // handleClickcorp =(event: React.MouseEvent<HTMLDivElement>) => {
+  handleClickcorp = () => {
+    this.setState({
+      popup: true,
+    })
+    console.log(this.state.popup)
+    // axios.get<Sistem>(`https://esi.evetech.net/legacy/universe/systems/${id}`)
+    //   .then(response => {
+    //     return console.log(response.data.name)
+    //   });
+    // console.log(this.isOpen);
+    // console.log('click');
+    // this.dispatch(changePopupOpen(true);
+  }
 
   render() {
     const listItems = this.state.fractions.map((item) =>
       <li className="itemFraction" key={item.corporation_id}>
-        {/* <div onClick={(e)=>this.getSolarSistem(e,item.solar_system_id.toString())}> */}
         <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -91,13 +109,19 @@ class Main extends React.Component<{}, MyState> {
             <h4>{item.name}</h4>
           </AccordionSummary>
           <AccordionDetails>
-            <div className="descBox">
-              <p className="description">{item.description}</p>
-              <p className="sistem">Solar sistem: <span className="sistemName">{item.sistemName ? item.sistemName : null}</span></p>
+            <div className="contentBox">
+              <div className="descBox">
+                <p className="description">{item.description}</p>
+                <p className="sistem">Solar sistem: <span className="sistemName">{item.sistemName ? item.sistemName : null}</span></p>
+              </div>
+              <Popup>
+                {<p onClick={() => this.handleClickcorp()} className="corporation">Corporation: <span className="corporationName">{item.corporationName ? item.corporationName : null}</span></p>}
+              </Popup>
+
             </div>
+
           </AccordionDetails>
         </Accordion>
-        {/* </div> */}
       </li>
     );
     return (
@@ -105,7 +129,6 @@ class Main extends React.Component<{}, MyState> {
         <ul className="listFractions">
           {listItems}
         </ul>
-
       </div>
 
     );
