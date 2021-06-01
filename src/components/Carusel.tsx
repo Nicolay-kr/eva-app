@@ -13,17 +13,19 @@ export default class Carusel extends Component {
             slidesToScroll: 1
         };
         return (
-            <div>
-                <h2> Single Item</h2>
+            <div className="carusel">
                 <Slider {...settings}>
-                    <div>
-                        <h3>1</h3>
+                    <div className="slide">
+                        <h2> Corporation information</h2>
+                        <div className="slideContent">
+                            <h3>1</h3>
+                        </div>
                     </div>
-                    <div>
-                        <h3>2</h3>
-                    </div>
-                    <div>
-                        <h3>3</h3>
+                    <div className="slide">
+                        <h2> Seo information</h2>
+                        <div className="slideContent">
+                            <h3>2</h3>
+                        </div>
                     </div>
                 </Slider>
             </div>

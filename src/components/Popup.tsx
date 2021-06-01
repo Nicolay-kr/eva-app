@@ -11,8 +11,8 @@ import Carusel from './Carusel';
 
 import {
     changePopup,
-  } from '../store/mainSlice';
-  import { useAppSelector, useAppDispatch } from '../store/hooks'
+} from '../store/mainSlice';
+import { useAppSelector, useAppDispatch } from '../store/hooks'
 //   import { useDispatch } from 'react-redux';
 
 const styles = (theme: Theme) =>
@@ -59,11 +59,11 @@ interface MainProps {
 }
 
 
-export default function Popup(props:MainProps) {
+export default function Popup(props: MainProps) {
     // const isOpen = useAppSelector(state => state.popup.value)
     // const dispatch = useAppDispatch()
     const [open, setOpen] = React.useState(false);
-    
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -83,11 +83,11 @@ export default function Popup(props:MainProps) {
             </div>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Corporation Info
+                    Confidential information
                 </DialogTitle>
                 <DialogContent dividers>
                     <div className="popupContent">
-                        <Carusel/>
+                        <Carusel />
                     </div>
                 </DialogContent>
             </Dialog>

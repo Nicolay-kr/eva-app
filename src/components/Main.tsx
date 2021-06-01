@@ -54,27 +54,17 @@ class Main extends React.Component<{}, MyState> {
         this.addField(`https://esi.evetech.net/legacy/corporations/`, `corporation_id`, `corporationName`)
       });
   }
-  // getSolarSistem(event: React.MouseEvent<HTMLDivElement>,id:string) {
-  //   axios.get<Sistem>(`https://esi.evetech.net/legacy/universe/systems/${id}`)
-  //     .then(response => {
-  //       return console.log(response.data.name)
-  //     });
-  // }
+ 
   addField = (url: string, param: string, fieldName: string) => {
-    // console.log(this.state.fractions)
-    // console.log(url, param)
     const arrayId: string[] = this.state.fractions.map((item: any) => item[param].toString())
-    console.log(arrayId)
     const arrayNames: string[] = []
     arrayId.forEach((item, index) => {
       axios.get<Sistem>(`${url}${item}`)
         .then(response => {
           arrayNames[index] = response.data.name;
           if (this.state.fractions.length === arrayNames.length) {
-            // console.log(arrayNames)
             const arr = this.state.fractions
             arr.forEach((item, index) => item[fieldName] = arrayNames[index])
-            // console.log(arr)
             this.setState({
               fractions: arr
             })
@@ -88,13 +78,6 @@ class Main extends React.Component<{}, MyState> {
       popup: true,
     })
     console.log(this.state.popup)
-    // axios.get<Sistem>(`https://esi.evetech.net/legacy/universe/systems/${id}`)
-    //   .then(response => {
-    //     return console.log(response.data.name)
-    //   });
-    // console.log(this.isOpen);
-    // console.log('click');
-    // this.dispatch(changePopupOpen(true);
   }
 
   render() {
@@ -115,11 +98,9 @@ class Main extends React.Component<{}, MyState> {
                 <p className="sistem">Solar sistem: <span className="sistemName">{item.sistemName ? item.sistemName : null}</span></p>
               </div>
               <Popup>
-                {<p onClick={() => this.handleClickcorp()} className="corporation">Corporation: <span className="corporationName">{item.corporationName ? item.corporationName : null}</span></p>}
+                {<p className="corporation">Corporation: <span className="corporationName">{item.corporationName ? item.corporationName : null}</span></p>}
               </Popup>
-
             </div>
-
           </AccordionDetails>
         </Accordion>
       </li>
