@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -8,11 +8,13 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Carusel from './Carusel';
+import { Corporation } from './Main';
+import { Universe } from './Main';
 
-import {
-    changePopup,
-} from '../store/mainSlice';
-import { useAppSelector, useAppDispatch } from '../store/hooks'
+// import {
+//     changePopup,
+// } from '../store/mainSlice';
+// import { useAppSelector, useAppDispatch } from '../store/hooks'
 //   import { useDispatch } from 'react-redux';
 
 const styles = (theme: Theme) =>
@@ -54,8 +56,11 @@ const DialogContent = withStyles((theme: Theme) => ({
         padding: theme.spacing(2),
     },
 }))(MuiDialogContent);
+
 interface MainProps {
     children: React.ReactNode;
+    corporation: Corporation|null;
+    universe: Universe|null;
 }
 
 
@@ -87,7 +92,7 @@ export default function Popup(props: MainProps) {
                 </DialogTitle>
                 <DialogContent dividers>
                     <div className="popupContent">
-                        <Carusel />
+                        <Carusel corporation={props.corporation} universe={props.universe} />
                     </div>
                 </DialogContent>
             </Dialog>
