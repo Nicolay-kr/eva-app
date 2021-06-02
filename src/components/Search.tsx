@@ -15,7 +15,7 @@ import axios from 'axios';
 // inventory_type: /universe/ids/ (Возвращает коллекции разных типов, содержащие имена соответствующие искомым ids)
 
 interface ItemI {
-    name: number;
+    name: number[];
 }
 type DataI = Record<string, number[]>
 const categories = [
@@ -50,26 +50,25 @@ const categories = [
 ];
 
 export default function Search() {
-    const [category, setCategory] = React.useState('none');
+    const [category, setCategory] = React.useState<Category>('none');
     const [errorCategory, setErrorCategory] = React.useState(false);
     const [searchText, setSearchText] = React.useState('');
     const [errorsearchText, setErrorsearchText] = React.useState(false);
     const [data, setData] = React.useState<number[]>([])
     const [request, setRequest] = React.useState(`https://esi.evetech.net/legacy/search?categories=inventory_type&search=Shi`);
+    const [names, setNames] = React.useState<number[]>([])
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCategory((state) => event.target.value);
+        setCategory((state) => event.target.value as Category);
         console.log(category)
-        // setRequest(`https://esi.evetech.net/legacy/search?categories=${category}&search=${searchText}`)
     };
     const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchText(event.target.value);
-        // setRequest(`https://esi.evetech.net/legacy/search?categories=${category}&search=${searchText}`)
     };
     const search = () => {
         setErrorsearchText(false);
         setErrorCategory(false)
-        if (category === "none") {
+        if (!category) {
             console.log('error',)
             setErrorCategory((state) => true)
             if (searchText.length < 3) {
@@ -79,7 +78,7 @@ export default function Search() {
         else if (searchText.length < 3) {
             console.log('error')
             setErrorsearchText((state) => true);
-            if (category === "none") {
+            if (!category) {
                 setErrorCategory((state) => true)
             }
         } else {
@@ -90,34 +89,59 @@ export default function Search() {
     };
     useEffect(() => {
         setRequest(`https://esi.evetech.net/legacy/search?categories=${category}&search=${searchText}`)
-        // console.log(request)
     }, [category, searchText])
 
 
+    type Category = 'corporation' | 'faction' | 'region' | 'solar_system' | 'station' | 'inventory_type' | 'none';
+
+    const requests: Record<Category, string> = {
+        none: `none`,
+        corporation: `https://esi.evetech.net/legacy/corporations/`,
+        faction: `https://esi.evetech.net/legacy/universe/factions/`, //-
+        region: `https://esi.evetech.net/legacy/universe/regions/`,
+        solar_system: `https://esi.evetech.net/legacy/universe/systems/`,
+        station: `https://esi.evetech.net/legacy/universe/stations/`,
+        inventory_type: `https://esi.evetech.net/legacy/universe/ids/`,//
+    }
 
     const getRequest = (url: string) => {
+        if (category === null) { return; }
         axios.get<DataI>(`${url}`)
             .then(response => {
                 console.log(response.data)
                 const arr = response.data[category];
                 setData(arr)
                 console.log(data)
+                const namesArr = []
+                if (category !== 'inventory_type' && category !== 'faction') {
+                    arr.forEach((item) => getRequestFromId(`${requests[category]}${item}`))
+                    // namesArr.push(names)
+                    // console.log(namesArr)
+
+
+                }
+
+            }
+            )
+    }
+
+    const getRequestFromId = (url: string) => {
+        axios.get<DataI>(`${url}`)
+            .then(response => {
+                console.log(response.data.name)
+                // setNames(response.data.name)
             })
     }
 
 
-    // const items = data.map((item, index) => {
-    //     <li key={item} className="item">
-    //         <div className="line">{item.toString()}</div>
-    //         <div className="line">{index}</div>
-    //     </li>
-    // })
-    const listItems = data.map((number, index) =>
-        <li className="item" key={number.toString()}>
-            <div className="line">{index}</div>
-            <div className="line lineActive">{number.toString()}</div>
+    const listItems = data.map((item, index) =>
+        <li className="item" key={item.toString()}>
+            <div className="line">
+                {index}
+                {/* {getRequest(`https://esi.evetech.net/legacy/corporations/${item}`)} */}
+            </div>
+            <div className="line lineActive">{item}</div>
 
-            {/* {number} */}
         </li>
     );
 
@@ -154,11 +178,10 @@ export default function Search() {
                 <li className="item" key="0">
                     <div className="line">Name</div>
                     <div className="line lineActive">ID</div>
-
-                    {/* {number} */}
                 </li>
                 {listItems}
             </ul>
         </div>
     );
 }
+// https://esi.evetech.net/legacy/corporations/{coorp_id}
