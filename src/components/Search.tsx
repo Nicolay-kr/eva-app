@@ -18,6 +18,9 @@ interface ItemI {
     name: number[];
 }
 type DataI = Record<string, number[]>
+type Names = {
+    name: number;
+  }
 const categories = [
     {
         value: 'none',
@@ -105,31 +108,28 @@ export default function Search() {
     }
 
     const getRequest = (url: string) => {
+        setNames([])
         if (category === null) { return; }
         axios.get<DataI>(`${url}`)
             .then(response => {
                 console.log(response.data)
                 const arr = response.data[category];
                 setData(arr)
-                console.log(data)
-                const namesArr = []
+                // console.log(data)
                 if (category !== 'inventory_type' && category !== 'faction') {
                     arr.forEach((item) => getRequestFromId(`${requests[category]}${item}`))
-                    // namesArr.push(names)
-                    // console.log(namesArr)
-
-
                 }
-
             }
             )
     }
 
     const getRequestFromId = (url: string) => {
-        axios.get<DataI>(`${url}`)
+        axios.get<Names>(`${url}`)
             .then(response => {
-                console.log(response.data.name)
-                // setNames(response.data.name)
+                const name = response.data.name
+                console.log(name)
+                setNames((state)=>[...state,name])
+                // console.log(names)
             })
     }
 
@@ -137,7 +137,7 @@ export default function Search() {
     const listItems = data.map((item, index) =>
         <li className="item" key={item.toString()}>
             <div className="line">
-                {index}
+                {names[index]}
                 {/* {getRequest(`https://esi.evetech.net/legacy/corporations/${item}`)} */}
             </div>
             <div className="line lineActive">{item}</div>
