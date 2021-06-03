@@ -63,7 +63,7 @@ export default function Search() {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCategory((state) => event.target.value as Category);
-        console.log(category)
+        // console.log(category)
     };
     const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchText(event.target.value);
@@ -72,20 +72,20 @@ export default function Search() {
         setErrorsearchText(false);
         setErrorCategory(false)
         if (!category) {
-            console.log('error',)
+            // console.log('error',)
             setErrorCategory((state) => true)
             if (searchText.length < 3) {
                 setErrorsearchText((state) => true);
             }
         }
         else if (searchText.length < 3) {
-            console.log('error')
+            // console.log('error')
             setErrorsearchText((state) => true);
             if (!category) {
                 setErrorCategory((state) => true)
             }
         } else {
-            console.log(request)
+            // console.log(request)
             getRequest(request)
         }
 
@@ -112,7 +112,7 @@ export default function Search() {
         if (category === null) { return; }
         axios.get<DataI>(`${url}`)
             .then(response => {
-                console.log(response.data)
+                // console.log(response.data)
                 const arr = response.data[category];
                 setData(arr)
                 // console.log(data)
@@ -127,7 +127,7 @@ export default function Search() {
         axios.get<Names>(`${url}`)
             .then(response => {
                 const name = response.data.name
-                console.log(name)
+                // console.log(name)
                 setNames((state)=>[...state,name])
                 // console.log(names)
             })
